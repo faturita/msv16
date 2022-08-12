@@ -68,16 +68,15 @@ component, formatting, style, styling, insert
 \section{Introduction}
 \label{intro}
 
-The understanding of the human brain has been one of the most exciting fields in recent history. The term psychokinesis and telekinesis has been around in science fiction for more than a century, from Luke Skywalker recalling his lightsaber using the Force, to Magneto  or Jean Grey of the X-Men. And what is telekinesis if not the movement of a physical object through signals emanating from the human brain?\cite{bcianiversary:10.1080/00051144.2019.1570644} The technology is not quite there at the moment, but it does not seem too far fetched to imagine right now, and not at all in the realm of science fiction. Controlling a prosthetic limb with the mind, or a monkey playing Pong\cite{neuralinkpong} with just his brain, are things that would have been unimaginable only a few years ago, but  cutting edge companies such as Neuralink are already working on invasive "high-bandwidth brain-machine interface system" \cite{info:neuralink/10.2196/16194}, which can make this kind of things a reality.
+The understanding of the human brain has been one of the most exciting fields in recent history. The term psychokinesis and telekinesis has been around in science fiction for more than a century, from Luke Skywalker recalling his lightsaber using the Force, to Magneto  or Jean Grey of the X-Men. And what is telekinesis if not the movement of a physical object through signals emanating from the human brain?\cite{bcianiversary:10.1080/00051144.2019.1570644} The technology is not quite there at the moment, but it does not seem too far fetched to imagine right now, and not at all in the realm of science fiction. Controlling a prosthetic limb with the mind, or a monkey playing Pong\cite{neuralinkpong} with just his brain, are things that would have been unimaginable only a few years ago, but  cutting edge companies such as Neuralink are already working on invasive "high-bandwidth brain-machine interface system" \cite{info:neuralink/10.2196/16194}, which can make this kind of things a reality~\cite{Huggins.etal2022}.  
 
-In terms of potential medical applications, patients with severe cases of Amyotrophic lateral sclerosis (ALS) can get into a 'Locked-in' state, in which they are unable to move any of their muscles to communicate. Creating a Brain-Computer interface can allow them to connect with the outside world  and substantially improve their quality of life\cite{GUY20185}.
+In terms of potential medical applications, patients with severe cases of Amyotrophic lateral sclerosis (ALS) can get into a 'Locked-in' state, in which they are unable to move any of their muscles to communicate. Creating a Brain-Computer interface my be the only remaining way to allow them to connect with the outside world and substantially improve their quality of life\cite{GUY20185}.  This has been the main goal of this discipline.
+
+The aim of this work is to analyze the P300 signals in terms of Actionable Analytics and emphasizing interpretability.  
+Deep learning black box problem which is solved by this approach.  Feature engineering can be useful in this situation. Because after all DL is still not very usable in this situation~\cite{Sterniuk.etal2021}.
 
 
-This work proceeds as follows.  Section \ref{cite:background} introduces several implementations of affordable robotic architectures and cognitive solutions.  In the following section preliminaries definitions are exposed and the theoretical background is exposed.  The Materials and Methods section describes the hardware components and the cognitive architecture of this robotic platform, aimed to fulfill the requirements established in the previous section.  Benchmarks descriptios are exposed in the following section.  Results are expounded in the the following section and finally discussion and summaries are presented in the last section.
-
-In the following sections we will take a look at how this classification can be performed using different algorithms such as Neural Networks, Support Vector Machines, or Scale Invariant Feature Transform, as well as the current state of the art  involving the use of such methods in recent years. Then we will discuss about our proposal for classification, which involves plotting the signals, and training a Convolutional Neural Network to identify the images, and finally compare these results to other studies performed using a common dataset of ALS patients.
-
-Interpretable results or actionable analytics.
+This work proceeds as follows.  Section \ref{cite:background} introduces several approaches to decode EEG signals in this rich field.  Then we will discuss about our proposal for classification, which involves plotting the signals, and training a Convolutional Neural Network to identify the images.  The Materials and Methods explains the control procedure implemented to verify the theoretical validaty of the proposed algorithm. Finally, the Results section compare these results to other studies performed using a public and reliable dataset of EEG signals from ALS patients. 
 
 \subsection{Background}
 \label{background}
@@ -235,9 +234,12 @@ To make this change work however, extra changes had to be made to the network pa
   \caption[MSV16 Letter accuracy]{Letter accuracy for MSV16 shows a significant improvement over SV16}
   \label{image:v3intensification}
 \end{figure}
+
 The third and final version of the network included both the improvements made in SV16, as well as the addition of multi-channel classification, and a smaller batch size. The results can be seen in \ref{tab:resultsv1v2v3}. This last version showed an accuracy increase in 6 out of 8 channels over the other two versions. It surpasses HIST in 3 out of 8 subjects, and performs equally on 1. 
 It does however seem to underperform on subject 1 and 4 compared to earlier versions and HIST. But it also reaches a 100\% accuracy on subject 8, which none of the other methods had managed to achieve.
 Also, by looking at the accuracy per intensification level, subject 8 achieved over 90\% accuracy in only 5 repetitions, meaning that a robust speller could be established with a much faster transmission rate. 
+
+Classification results are also shown from ~\cite{Zhang.etal2020}.
 
 The learning curve for subject 5 at an intensification level of 4 can be seen in \ref{image:v3curve}. If compared to the same curve in the first network \ref{image:v1curve}, the accuracy for the validation set is much higher, while the accuracy of the training set remains at or close to 100\%. This suggests that there is still some overfitting left to solve, which would indicate that this method still has potential to find even higher success.
 

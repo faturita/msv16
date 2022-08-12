@@ -6,6 +6,8 @@
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usepackage[mode=buildnew]{standalone}
 \usepackage{subcaption} 
 \usepackage{textcomp}
 \usepackage{xcolor}
@@ -72,6 +74,10 @@ In terms of potential medical applications, patients with severe cases of Amyotr
 
 
 This work proceeds as follows.  Section \ref{cite:background} introduces several implementations of affordable robotic architectures and cognitive solutions.  In the following section preliminaries definitions are exposed and the theoretical background is exposed.  The Materials and Methods section describes the hardware components and the cognitive architecture of this robotic platform, aimed to fulfill the requirements established in the previous section.  Benchmarks descriptios are exposed in the following section.  Results are expounded in the the following section and finally discussion and summaries are presented in the last section.
+
+In the following sections we will take a look at how this classification can be performed using different algorithms such as Neural Networks, Support Vector Machines, or Scale Invariant Feature Transform, as well as the current state of the art  involving the use of such methods in recent years. Then we will discuss about our proposal for classification, which involves plotting the signals, and training a Convolutional Neural Network to identify the images, and finally compare these results to other studies performed using a common dataset of ALS patients.
+
+Interpretable results or actionable analytics.
 
 \subsection{Background}
 \label{background}
@@ -143,16 +149,66 @@ In the ALS experiment, the data was recorded using an 8-channel EEG, and 10 repe
 The experiment was performed using 7 5-letter words, resulting in 35 letters, and a total of 33600 segments. Out of these, 15 letters were used for the training of the networks, and the remaining 20 were used to test the accuracy.
 
 
+Explain the three networks.
+
+\subsection{VGG16 Neural Network}
+
+\begin{figure*}[!t]
+\includestandalone[width=18cm, keepaspectratio]{images/nnv1}
+\caption[VGG16 Neural Network]{First version of the NN, a set of 5 convolutional layers is followed by 4 fully connected layer, and finally activated using a sigmoid function}
+\label{fig:nnv1}
+\end{figure*}
 
 
+The first version of the neural network was based on VGG16, a deep network which was used to win the ImageNet Large Scale Visual Recognition Challenge (ILSVR) competition in 2014\cite{ilsvr2014}. It uses a 3x3 filter with a stride of 1 and uses padding to keep the same spatial dimensions, followed by a MaxPool layer of 2x2 size and stride 2, and follows this arrangement of convolution and maxpool layers all the way throughout the whole architecture, for 5 convolutional + maxpool sets. In the end, the VGG16 has 2 fully connected (regular neural network) layers, while we are using 4. In the end, the last layer is activated with a sigmoid function to make the binary classification. 
+The advantage of the VGG16 approach, is that it reduces the amount of hyperparameters that must be tinkered with, as all the filters and strides are kept constant. 
 
+Our network has 6 convolutional layers with a depth of 1, 32, 64, 128, 128 and 256. The stride in the maxpool reduces the spatial size in each iteration, leaving a spatial size of 150, 75, 38, 19, 10, 5 (the images are squared, so width and height are the same). 
 
+After the convolutional layers, a dropout layer with a drop rate of 0.5, and a flatten layer to make the data ready for the dense layers. The 4 dense layers have a size of 6400, 1024, 512 and 256 units, with the last one having a sigmoid activation.
 
+The learning algorithm was the stochastic gradient descent method called Adam\cite{adam2014}, and the loss function was the means squared difference. And it was done in batches of size 20. 
 
+The learning rate used was $5\,10^{-4}$, which deviates from the recommended $3\, 10^{-3}$. This parameter was tinkered with for a bit, and was the suspect of the Network not convering at first, so decreasing the learning rate helped a bit.
 
+Ultimately, the convergence issue was solved by balancing the dataset, first by prunning some of the misses in, and in later versions by duplicating the hits, as this latter method allowed the use of all the misses.
+
+After training with the first 15 letters, the network was used to predict the remaining 20 letters, and the performance of the network was calculated by finding the row and column with the highest predicted change of containing the P300 signal and comparing the predicted letter to the original expected letter from the experiment.
+
+These predictions were done by training each of the EEG channels separately, and then finding the channel that best perform. As mentioned early, another prediction was used by making a non-weighted voting system by each of the channels, and selecting the row and column with the most votes.
+
+Since we are running what is considered a 'BCI Simulation'. The training was performed only once, instead of multiple runs doing cross validation or calculating mean and standard deviation in the accuracies. This is because we want to simulate a real use case of a patient actually using our interface.
+
+\subsection{Small VGG16}
+\begin{figure*}[h]
+\centering
+\includestandalone[width=18cm, keepaspectratio]{images/nnv2}
+\caption[SVG16 Neural Network]{SV16 is similar to VGG16, but has two less convolutional layers and two less dense layers}
+\label{fig:nnv2}
+\end{figure*}
+
+The second approach was the Small VGG16  (SV16). The first change was to reduce the network size, so 2 convolutional layers and 2 fully connected layers were removed. Leaving the convolutional layers depth at 1, 32, 64 and 128, with spatial sides of 150, 75, 38, and 19. The flatten and dropout layers are left untouched, and then finally 3 fully connected layers of sizes 46208, 512 and 256. The overall philosophy of the architecture was left untouched, i.e. the padding, filter size and stride.
+
+Another addition in this version was early stopping at 7 epochs to help decrease overfitting. 
+
+\subsection{Multichannel Small VGG16 (MSV16)}
+
+\begin{figure*}[h]
+\includestandalone[width=18cm, keepaspectratio]{images/nnv3}
+\caption[MSV16 Neural Network]{MSV16 has the same architecture as the second one, but the input layer is modified for an 8-channel input}
+\label{fig:nnv3}
+\end{figure*}
+
+With this multichannel network, instead of training all of the EEG channels separately, they were merged into a single 8-channel image on the preprocessing stage. And the network was trained with this image as input. This modified the input layer to have a depth of 8, but the subsequent layers were left intact. The best improvement was that it allowed for the combination of all the different EEG channels to work together, achieving a higher performance than each channel separately.
+
+To make this change work however, extra changes had to be made to the network parameters. The batch size was reduced to 6, as having a greater batch size generated memory issues. The last change was reducing the learning rate to the recommended value of $3\cdot10^-3$.
 
 \section{Results}
 \label{sec:results}
+
+
+\subsection{Validation on the Pseudoreal dataset}
+
 
 \begin{table}[h]
 \centering

@@ -59,10 +59,17 @@ jsantos@itba.edu.ar}
 
 \begin{abstract}
 The use of Brain-Computer Interfaces can provide substantial improvements to the quality of life of patients with diseases such as severe Amyotrophic Lateral Sclerosis that could potentially derive in Locked-In syndrome, by creating new avenues in which these people can communicate and interact with the outside world. The P300 speller is an interface which provide the patients the ability to spell letters and eventually words, so that they can speak while unable to use their mouth. The P300 speller works by reading signals from the brain using an Electroencephalogram. Traditionally, these signals were plotted and interpreted by specialized technicians or neurologists, but the development of Machine learning algorithms for classification allow the computers to perform this analysis and detect the P300 signals, which is an Event Related Potential triggered when certain stimuli such as a bright light is triggered on a place that the patient is focused on. In this thesis we used a Convolutional Neural Network to train multi-channel EEG readings, and attempted to detect P300 signals from a P300 speller. The results are corroborated against a public ALS dataset.
+
+
+This work proposes a method to experiment on EEG signals.
+This work proposes a method to create actionable explainable analytics on EEG waveform components.
+
+
+
 \end{abstract}
 
 \begin{IEEEkeywords}
-component, formatting, style, styling, insert
+BCI,EEG,P300,Waveform,CNN,Pseudoreal
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -70,7 +77,7 @@ component, formatting, style, styling, insert
 
 The understanding of the human brain has been one of the most exciting fields in recent history. The term psychokinesis and telekinesis has been around in science fiction for more than a century, from Luke Skywalker recalling his lightsaber using the Force, to Magneto  or Jean Grey of the X-Men. And what is telekinesis if not the movement of a physical object through signals emanating from the human brain?\cite{bcianiversary:10.1080/00051144.2019.1570644} The technology is not quite there at the moment, but it does not seem too far fetched to imagine right now, and not at all in the realm of science fiction. Controlling a prosthetic limb with the mind, or a monkey playing Pong\cite{neuralinkpong} with just his brain, are things that would have been unimaginable only a few years ago, but  cutting edge companies such as Neuralink are already working on invasive "high-bandwidth brain-machine interface system" \cite{info:neuralink/10.2196/16194}, which can make this kind of things a reality~\cite{Huggins.etal2022}.  
 
-In terms of potential medical applications, patients with severe cases of Amyotrophic lateral sclerosis (ALS) can get into a 'Locked-in' state, in which they are unable to move any of their muscles to communicate. Creating a Brain-Computer interface my be the only remaining way to allow them to connect with the outside world and substantially improve their quality of life\cite{GUY20185}.  This has been the main goal of this discipline.
+In terms of potential medical applications, patients with severe cases of Amyotrophic lateral sclerosis (ALS) can get into a 'Locked-in' state, in which they are unable to move any of their muscles to communicate. Creating a Brain-Computer interface my be the only remaining way to allow them to connect with the outside world and substantially improve their quality of life\cite{vucic.2021,GUY20185}.  This has been the main goal of this discipline. AAC devices
 
 The aim of this work is to analyze the P300 signals in terms of Actionable Analytics and emphasizing interpretability.  
 Deep learning black box problem which is solved by this approach.  Feature engineering can be useful in this situation. Because after all DL is still not very usable in this situation~\cite{Sterniuk.etal2021}.
@@ -83,6 +90,8 @@ This work proceeds as follows.  Section \ref{cite:background} introduces several
 
 
 As mentioned in section 1, the advance of hardware technologies, as well as the cheap accessibility of portable EEGs have significantly advanced the study of EEG signals using DNN. According to a 10 year study of Deep Learning in EEG\cite{dnn10years}, the amount of published papers that matched the searching criterion n [”Deep Learning” AND ”EEG” AND ”Classification” OR ”Recognition” OR ”Identification”] after manually curating the list, 213 papers had been published by march 2020. Out of these the vast majority of them were published from 2019 to 2020, and the trend is increasing rapidly. This papers include all range of studies of EEG, varying from Brain-Computer Interfaces to other applications such as Disease Detection, Sleep stage classification and Emotion recognition. 
+
+General approches to decode P300\cite{Jiannan.etal2021}.
 
 When discussing applications of Deep Networks in BCI, they were a little hesitant, as Convolutional Networks are often used for computer vision or speech recognition, and did not match the requirements needed to analyze EEG signals. However they found many papers of successful applications of Convolutional Networks such as the work of Li et al.\cite{LI8709723}, which uses 3 different blocks of convolutional networks to decode motor imagery, which if successful would allow patients with loss of motor function to recover this lost mobility by the use of external devices. Liu et al. \cite{LIU2018288} used Batch Normalization to speed up the training and alleviate the overfitting. There are many other papers describing not only Deep Architectures for Brain Computer interfaces, but also for disease detection, mainly focusing on Epilepsy (with almost  50\% of the published papers) and Depression in second place with about 10\%.
 
@@ -108,23 +117,19 @@ Another takeaway from both reviews, is that while Deep Learning seems like a big
 
 
 \subsection{Software and Hardware}
-The code ran on a HP Pavillion laptop with a Intel I7 @2.8GHz processor. The available RAM was 16Gb, although the software could run on much less RAM. A GPU was available, but the software did not run on a GPU.
+The code for all the experiments runs on a HP Pavillion laptop with a Intel I7 @2.8GHz processor. The available RAM is 16Gb, and the entire stack runs on CPU.
 
-The software for the signal segmentation, processing, and Signal drugging was written in python, using a modified version of the EEGWave repository from codeocean \cite{Ramele2018EEGWA}. It uses the MNE library for segmenting the data and some operations with numpy for signal processing.
-The signal plotting is written in C++ using OpenCV, And the NN was run using Tensorflow's API for C++, based on Benny Friedman's article \cite{BennyCNN}. The full code is public and can be found at https://github.com/shipupi/BciSift/.
+The software for the signal segmentation, processing, and the procedure to create the pseudoreal dataset is written in python, using a modified version of the repository EEGWave which is publicly availalble in the CodeOcean platform \cite{Ramele2018EEGWA}. It uses the MNE library~\cite{Gramfort.etal2014} for segmenting the data and some operations with numpy~\cite{Harris.etal2020} for signal processing procedures.
+On the other hand, the generation of the plot of the signals is written in C++ using OpenCV, and all the neural networks architectures  are run using Tensorflow's API for C++, based on Benny Friedman's article~\cite{BennyCNN}. The full code is public and can be found at https://github.com/shipupi/BciSift/.
 
 
 \subsection{P300 Experiment}
 \subsubsection{Experiment Description}
-The experiment was performed by Riccio et al., 2013\cite{riccio2013}. where a group of eight individuals with confirmed ALS disease were tasked to spell 7 5-letter words (35 total letters) with a P300 speller.
+The experiment was performed by Riccio et al., 2013\cite{riccio2013}, where a group of eight individuals with confirmed ALS disease were tasked to spell $7$ 5-letter words (35 total letters) with a with a standard P300 matrix.  
 
-The first three words were used for calibration/training, while the remaining four were used for testing with visual feedback.
+Each time a letter is attempted to be spelled is called a letter trial attempt. Each trial contains 10 flashes in each of the 6 rows, and 10 flashes in each of the 6 columns. Each flash lasts for a total of 0.125 seconds each, following by an inter-flashing pause of the same duration. After each 120 flashes, an inter-trial pause is performed before moving to the next letter.
 
-Each time a letter was attempted to be spelled is called a Trial. Each trial contained 10 flashes in each of the 6 rows, and 10 flashes in each of the 6 columns. The flashes lasted a total of 0.125 seconds each, followed by an inter-flashing pause of the same duration. After each 120 flashes, an inter-trial pause was performed before moving to the next letter.
-
-The experiment was performed with an 8 channel EEG, with electrodes placed at the Fz, Cz, Pz, Oz, P3, P4, PO7, and PO8 channels according to the 10/20 international system. The software used for the flashing was the BCI2000 (open source) \cite{schalk2004}
-
-The subjects were instructed to perform a copy-spelling task, which means that they have to spell a predetermined set of words that was instructed beforehand.
+The original experiment was performed with an 8 channel EEG \textbf{DEVICE}, with electrodes placed at the Fz, Cz, Pz, Oz, P3, P4, PO7, and PO8 channels according to the 10/20 international system. The software used for the implementing the speller and the processing was the BCI2000 (open source)~\cite{schalk2004}. The eight subjects were instructed to perform a copy-spelling task, which means that they had to spell a predetermined set of words that was instructed beforehand.  In the original experiment, and the approach used in this work, is to use the first three words for calibration/training, while the remaining four are used for testing with visual feedback.
 
 
 \begin{figure}[htbp]
@@ -133,24 +138,14 @@ The subjects were instructed to perform a copy-spelling task, which means that t
 \label{fig:datastructure}
 \end{figure}
 
-
-\subsubsection{Dataset Structure}
-
-After processing and segmenting the raw data. We can calculate the amount of segments generated by a single letter as follows:
-
-\begin{equation}
-N_l = (n_r + n_c)rc
-\end{equation}
-Where $n_r$ and $n_c$ are the number of rows and columns in the P300 matrix, $c$ is the amount of channels i.e. the amount of electrodes on the EEG, and $r$ is the amount of repetitions done per letter.
-
-In the ALS experiment, the data was recorded using an 8-channel EEG, and 10 repetitions were performed per letter. The P300 matrix contained 6 rows and 6 columns, this results in a total of 960 segments per single letter. There is a single row and a single column with the P300 signal, and 5 rows and 5 columns without it. This results in each letter being segmented into 160 hits, and 800 nohits.
-
-The experiment was performed using 7 5-letter words, resulting in 35 letters, and a total of 33600 segments. Out of these, 15 letters were used for the training of the networks, and the remaining 20 were used to test the accuracy.
+As there are 10 repetitions per letter, 6 rows and 6 columns, this generates 120 flashes per single letter.  Summing up on all the $8$ channels, this results in a total of 960 segments, which are separated into 160 hits, and 800 nohits.  The experiment was performed using $7$ 5-letter words, resulting in $35$ letters, and a total of $33600$ segments. Out of these, $15$ letters were used for the training of the networks, and the remaining $20$ were used to test the accuracy in the BCI simulation.
 
 
-Explain the three networks.
+\subsection{Neural Network Architectures}
 
-\subsection{VGG16 Neural Network}
+This work proposes and experiments with three network architectures to identify the pattern of the P300 on the signal plot.
+
+\subsubsection{VGG16 Neural Network}
 
 \begin{figure*}[!t]
 \includestandalone[width=18cm, keepaspectratio]{images/nnv1}
@@ -159,12 +154,11 @@ Explain the three networks.
 \end{figure*}
 
 
-The first version of the neural network was based on VGG16, a deep network which was used to win the ImageNet Large Scale Visual Recognition Challenge (ILSVR) competition in 2014\cite{ilsvr2014}. It uses a 3x3 filter with a stride of 1 and uses padding to keep the same spatial dimensions, followed by a MaxPool layer of 2x2 size and stride 2, and follows this arrangement of convolution and maxpool layers all the way throughout the whole architecture, for 5 convolutional + maxpool sets. In the end, the VGG16 has 2 fully connected (regular neural network) layers, while we are using 4. In the end, the last layer is activated with a sigmoid function to make the binary classification. 
-The advantage of the VGG16 approach, is that it reduces the amount of hyperparameters that must be tinkered with, as all the filters and strides are kept constant. 
+The first version of the neural network was based on VGG16, a deep network which was used to win the ImageNet Large Scale Visual Recognition Challenge (ILSVR) competition in 2014~\cite{ilsvr2014}. It uses a $3x3$ filter with a stride of $1$ and uses padding to keep the same spatial dimensions, followed by a MaxPool layer of $2x2$ size and stride $2$, and follows this arrangement of convolution and MaxPool layers all the way throughout the whole architecture, for 5 convolutional plus MaxPool sets. The original VGG16 has $2$ fully connected layers, while for this particular case we are using $4$. In the end, the last layer is activated with a sigmoid function to make the binary classification. 
 
-Our network has 6 convolutional layers with a depth of 1, 32, 64, 128, 128 and 256. The stride in the maxpool reduces the spatial size in each iteration, leaving a spatial size of 150, 75, 38, 19, 10, 5 (the images are squared, so width and height are the same). 
+The network implementation has $6$ convolutional layers with a depth of $1, 32, 64, 128, 128$ and $256$. The stride in the MaxPool reduces the spatial size in each iteration, leaving a spatial size of $150, 75, 38, 19, 10, 5$ (image plots are squared, so width and height are the same). 
 
-After the convolutional layers, a dropout layer with a drop rate of 0.5, and a flatten layer to make the data ready for the dense layers. The 4 dense layers have a size of 6400, 1024, 512 and 256 units, with the last one having a sigmoid activation.
+After the convolutional layers, a dropout layer with a drop rate of $0.5$, and a flatten layer to make the data ready for the dense layers. The $4$ dense layers have a size of $6400, 1024, 512$ and $256$ units, with the last one having a sigmoid activation.
 
 The learning algorithm was the stochastic gradient descent method called Adam\cite{adam2014}, and the loss function was the means squared difference. And it was done in batches of size 20. 
 
@@ -176,9 +170,11 @@ After training with the first 15 letters, the network was used to predict the re
 
 These predictions were done by training each of the EEG channels separately, and then finding the channel that best perform. As mentioned early, another prediction was used by making a non-weighted voting system by each of the channels, and selecting the row and column with the most votes.
 
-Since we are running what is considered a 'BCI Simulation'. The training was performed only once, instead of multiple runs doing cross validation or calculating mean and standard deviation in the accuracies. This is because we want to simulate a real use case of a patient actually using our interface.
+The task of decoding information from brain signals inherits practices from Machine Learning (ML). Cross-validation is used in ML to reduce overfitting bias and to increase the independence on the dataset that is used as calibration. However, the brain data used in BCI is extracted from a person who is performing a task and whose signals are changing while trying to adapt to this operation. Hence, mixing the dataset, shuffling the sessions and trials is at least a challenging assumption. BCI Simulation, on the other hand, is not very well defined in BCI research, but their practice, without naming it, has been the regular approach for BCI Competitions. It consists in reproducing the operational sequence that was utilized to generate the dataset. Hence, the experiment is replicated offline using the training information to train or calibrate a classifier, and to classify the testing signals as if they were generated at that same moment~\cite{ramele.2018}. The training was performed only once, instead of multiple runs doing cross validation or calculating mean and standard deviation in the accuracies. This is because we want to simulate a real use case of a patient actually using our interface.
 
-\subsection{Small VGG16}
+The advantage of the VGG16 approach, is that it reduces the amount of hyperparameters that must be tinkered with, as all the filters and strides are kept constant. 
+
+\subsubsection{Small VGG16}
 \begin{figure*}[h]
 \centering
 \includestandalone[width=18cm, keepaspectratio]{images/nnv2}
@@ -190,7 +186,7 @@ The second approach was the Small VGG16  (SV16). The first change was to reduce 
 
 Another addition in this version was early stopping at 7 epochs to help decrease overfitting. 
 
-\subsection{Multichannel Small VGG16 (MSV16)}
+\subsubsection{Multichannel Small VGG16 (MSV16)}
 
 \begin{figure*}[h]
 \includestandalone[width=18cm, keepaspectratio]{images/nnv3}
@@ -502,37 +498,11 @@ The biggest breakthrough of this work however is the MSV16 version, the inclusio
 
 \section*{Acknowledgment}
 
-The preferred spelling of the word ``acknowledgment'' in America is without 
-an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B. 
-G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor 
-acknowledgments in the unnumbered footnote on the first page.
+We would like to thank ITBA grants
 
-\section*{References}
-
-Please number citations consecutively within brackets \cite{b1}. The 
-sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
-number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
-the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
-
-Number footnotes separately in superscripts. Place the actual footnote at 
-the bottom of the column in which it was cited. Do not put footnotes in the 
-abstract or reference list. Use letters for table footnotes.
-
-Unless there are six authors or more give all authors' names; do not use 
-``et al.''. Papers that have not been published, even if they have been 
-submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers 
-that have been accepted for publication should be cited as ``in press'' \cite{b5}. 
-Capitalize only the first word in a paper title, except for proper nouns and 
-element symbols.
-
-For papers published in translation journals, please give the English 
-citation first, followed by the original foreign-language citation \cite{b6}.
 
 \bibliographystyle{IEEEtran}
 \bibliography{dl}
 
-\vspace{12pt}
-\color{red}
-IEEE conference templates contain guidance text for composing and formatting conference papers. Please ensure that all template text is removed from your conference paper prior to submission to the conference. Failure to remove the template text from your paper may result in your paper not being published.
 
 \end{document}

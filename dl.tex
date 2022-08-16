@@ -15,7 +15,7 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Decoding P300 Waveform plots based on Convolutional Neural Networks}
+\title{Decoding P300 Waveform from signal plots based on Convolutional Neural Networks}
 
 
 \author{\IEEEauthorblockN{1\textsuperscript{st} Brian Ezequiel Ail}
@@ -75,27 +75,43 @@ BCI,EEG,P300,Waveform,CNN,Pseudoreal
 \section{Introduction}
 \label{intro}
 
-The understanding of the human brain has been one of the most exciting fields in recent history. The term psychokinesis and telekinesis has been around in science fiction for more than a century, from Luke Skywalker recalling his lightsaber using the Force, to Magneto  or Jean Grey of the X-Men. And what is telekinesis if not the movement of a physical object through signals emanating from the human brain?\cite{bcianiversary:10.1080/00051144.2019.1570644} The technology is not quite there at the moment, but it does not seem too far fetched to imagine right now, and not at all in the realm of science fiction. Controlling a prosthetic limb with the mind, or a monkey playing Pong\cite{neuralinkpong} with just his brain, are things that would have been unimaginable only a few years ago, but  cutting edge companies such as Neuralink are already working on invasive "high-bandwidth brain-machine interface system" \cite{info:neuralink/10.2196/16194}, which can make this kind of things a reality~\cite{Huggins.etal2022}.  
+The understanding of the human brain has been one of the most exciting fields in recent history. The term psychokinesis and telekinesis has been around in science fiction for more than a century, from Luke Skywalker recalling his lightsaber using the Force, to Magneto  or Jean Grey of the X-Men. And what is telekinesis if not the movement of a physical object through signals emanating from the human brain?\cite{bcianiversary:10.1080/00051144.2019.1570644}. Recent advances have shown impressive achievements like controlling a prosthetic limb with the mind~\cite{Ajiboye.2017} or a monkey playing the computer game Pong\cite{neuralinkpong,info:neuralink/10.2196/16194}.  Although these  impressive developments are based on invasive electrodes, a steady improvement albeit with modest results, is also being attained with noninvasive approaches~\cite{Huggins.etal2022}.
 
-In terms of potential medical applications, patients with severe cases of Amyotrophic lateral sclerosis (ALS) can get into a 'Locked-in' state, in which they are unable to move any of their muscles to communicate. Creating a Brain-Computer interface my be the only remaining way to allow them to connect with the outside world and substantially improve their quality of life\cite{vucic.2021,GUY20185}.  This has been the main goal of this discipline. AAC devices
+In terms of potential medical applications, patients with severe cases of Amyotrophic Lateral Sclerosis (ALS)~\cite{Pugliese.etal2022} can get into a \textit{Locked-in} state, in which they are unable to move any of their muscles to communicate, and more traditional Alternative Augmentation Communication (AAC) devices ~\cite{Masiello.2022}, that harness information from any remaining muscle activity, are not effective. Creating a Brain-Computer Interface (BCI) may be the only remaining way to allow them to connect with the outside world and help them to improve their quality of life\cite{vucic.2021,GUY20185}.  
 
-The aim of this work is to analyze the P300 signals in terms of Actionable Analytics and emphasizing interpretability.  
-Deep learning black box problem which is solved by this approach.  Feature engineering can be useful in this situation. Because after all DL is still not very usable in this situation~\cite{Sterniuk.etal2021}.
+%REWRITE The P300 is an event-related potential (ERP) component associated with unexpected stimulithat provide task-relevant information. It takes its name from its polarity and latency: approx-imately 300 ms after a triggering event, (latency may range from 275 to 600 ms) the P300wave presents a positive voltage peak. As neural stimulation produces electrical activity sensedby non-invasive means, P300-based BCIs capitalize on discriminating this voltage peak frombackground signal noise and associating the desired signal with an event. Usually most visibleover the central parietal scalp. P300 signals are among the most reliable ERPs detectable viaEEG. Because they reflect attention rather than gaze, they have wide application in situationswhere users lack eye control and other sensory modalities such as auditory stimulation ~
 
+The P300 is a positive deflection that appears on EEG signals around 300 ms after the onset of an unexpected stimulus that provides relevant information. It can be cleverly used to implement a speller device that exploits the appearance of this waveform indicating which particularly event a person is paying attention to.  BCI systems based on P300 need to identify this voltage variation out of the natural noise of the EEG signal, and by doing that they can decode the message a person is trying to convey~\cite{Antonietti.etal2021,Orhanbulucu.etal2022}.
 
-This work proceeds as follows.  Section \ref{cite:background} introduces several approaches to decode EEG signals in this rich field.  Then we will discuss about our proposal for classification, which involves plotting the signals, and training a Convolutional Neural Network to identify the images.  The Materials and Methods explains the control procedure implemented to verify the theoretical validaty of the proposed algorithm. Finally, the Results section compare these results to other studies performed using a public and reliable dataset of EEG signals from ALS patients. 
+CHEKCK The aim of this work is to analyze P300 signals emphasizing interpretability, by detecting automatically this component from the signal plot which is something that a clinician or physician can easily corroborate.  To do so, this work proposes to use Deep Learning (DL) techniques, particularly Convolutional Neural Networks (CNN) which have been proved very efficient to extract information from images, in this case images of signal plots.  At the same time, this proposal tackles one of the most important issues of applying DL techniques to health information, which is the the black box nature of neural network architectures. This work empahsizes the usage of this form of Feature engineering in terms of Actionable Analytics~\cite{Ganapathy.etal2018}, insight data that can be extracted from the problem, and that has a certain meaning in the knowledge base and dictionary used for the community that is currently dealing with the problem and at the same time using DL in a way which emphasize its real utility in this particular problem where data is scarce and DL is still not very usable in this situation~\cite{Sterniuk.etal2021}.
+
+This work proceeds as follows.  Section \ref{background} introduces several approaches to decode EEG signals in this rich field.  Then we will discuss about our proposal for classification, which involves plotting the signals, and training a Convolutional Neural Network to identify the images.  The Materials and Methods explains the control procedure implemented to verify the theoretical validaty of the proposed algorithm. Finally, the Results section compare these results to other studies performed using a public and reliable dataset of EEG signals from ALS patients. 
 
 \subsection{Background}
 \label{background}
 
+Plethora of methods have been applied to decode EEG signals~\cite{Orhanbulucu.etal2022,Avola.etal2022} and particularly to decode P300 signals~\cite{Jiannan.etal2021}.  However only a few have focused on the idea of determining the presence of the P300 ERP response based on the waveform that can be obtained from a signal plot~\cite{Ramele2018EEGWA}.
 
-As mentioned in section 1, the advance of hardware technologies, as well as the cheap accessibility of portable EEGs have significantly advanced the study of EEG signals using DNN. According to a 10 year study of Deep Learning in EEG\cite{dnn10years}, the amount of published papers that matched the searching criterion n [”Deep Learning” AND ”EEG” AND ”Classification” OR ”Recognition” OR ”Identification”] after manually curating the list, 213 papers had been published by march 2020. Out of these the vast majority of them were published from 2019 to 2020, and the trend is increasing rapidly. This papers include all range of studies of EEG, varying from Brain-Computer Interfaces to other applications such as Disease Detection, Sleep stage classification and Emotion recognition. 
+The success of Deep Learning in several fields\cite{Sarker.2021}, has opened the posibility of using this same technique to try to identify the complex patterns that can be detected from EEG signals.  According to \cite{dnn10years}, the amount of published papers that matched the searching criterion  [”Deep Learning” AND ”EEG” AND ”Classification” OR ”Recognition” OR ”Identification”] after manually curating the list, reflects that around 213 papers had been published by march 2020. Out of these the vast majority of them were published from 2019 to 2020, and the trend is increasing rapidly. 
 
-General approches to decode P300\cite{Jiannan.etal2021}.
+Predicting EEG signal channels based on the ifnromation from other channels~\cite{Avijit.2020}.
+
+BCINet a convolutional neural network to predict population features from EEG signals and workload~\cite{Singh.etal2020}.
+
+CNN to identify Motor Imagery patterns which are also used in BCI applications.\cite{Tabar.2016}, or Sleep Stage identification\cite{Cai.etal2021}.
+
+EEGNet \cite{Lawhern.2018}.
+
+xDAWN
+Variational Mode Decomposition VMD
+
+A complete review regarding the usage of Deep Learning methods to identify EEG signals is outside of the scope of this work, and may deserve an independent review by itself.  At the same time, the utility of DL in processing EEG signals, and health care information in general is still debatable, due to the issue of not being able to obtain enough information from each patient and the limitations of transfer learning approaches for health data.  We circumvent that problem here because we are using DL-CNN for what we know they do well: decoding information from images.
 
 When discussing applications of Deep Networks in BCI, they were a little hesitant, as Convolutional Networks are often used for computer vision or speech recognition, and did not match the requirements needed to analyze EEG signals. However they found many papers of successful applications of Convolutional Networks such as the work of Li et al.\cite{LI8709723}, which uses 3 different blocks of convolutional networks to decode motor imagery, which if successful would allow patients with loss of motor function to recover this lost mobility by the use of external devices. Liu et al. \cite{LIU2018288} used Batch Normalization to speed up the training and alleviate the overfitting. There are many other papers describing not only Deep Architectures for Brain Computer interfaces, but also for disease detection, mainly focusing on Epilepsy (with almost  50\% of the published papers) and Depression in second place with about 10\%.
 
 Another review by Roy et al.\cite{RoyReview} specifically about using Deep Learning on EEG signals review a total of 156 papers. First of all, there is a very similar graph showing an increasing trend in the amount of published papers over the years, rising from less than 10 in 2014 to over 50 in 2018.
+
+Authors in \cite{Singh.2021} presented an approach where CNN are used to interpret the information from scalogram images from a single channel electrode.
 
 
 It also goes over most of the common problems, which we have also run into in this work. First of all regarding data imbalance, most papers with imbalanced data, such as epileptic seizure detection, or sleep stage transitions, used some form of class balancing, either by subsampling the majority class or by resampling the minority class on training.
@@ -112,24 +128,15 @@ This review gives us two big takeaways, first of all, it validates most of the c
 Another takeaway from both reviews, is that while Deep Learning seems like a big promise for the field of EEG, the field is still in it's early steps, the Deep Networks do not perform nowhere as good on EEG signals as they perform on other applications such as computer vision  or speech recognition. So it is still too early to say if Deep networks can perform as good as other learning algorithms, but if they can reach the same accuracy as they do on other applications, it can be a practical tool for EEG analysis.
 
 
-
 \section{Materials and Methods}
-
-
-\subsection{Software and Hardware}
-The code for all the experiments runs on a HP Pavillion laptop with a Intel I7 @2.8GHz processor. The available RAM is 16Gb, and the entire stack runs on CPU.
-
-The software for the signal segmentation, processing, and the procedure to create the pseudoreal dataset is written in python, using a modified version of the repository EEGWave which is publicly availalble in the CodeOcean platform \cite{Ramele2018EEGWA}. It uses the MNE library~\cite{Gramfort.etal2014} for segmenting the data and some operations with numpy~\cite{Harris.etal2020} for signal processing procedures.
-On the other hand, the generation of the plot of the signals is written in C++ using OpenCV, and all the neural networks architectures  are run using Tensorflow's API for C++, based on Benny Friedman's article~\cite{BennyCNN}. The full code is public and can be found at https://github.com/shipupi/BciSift/.
-
 
 \subsection{P300 Experiment}
 \subsubsection{Experiment Description}
-The experiment was performed by Riccio et al., 2013\cite{riccio2013}, where a group of eight individuals with confirmed ALS disease were tasked to spell $7$ 5-letter words (35 total letters) with a with a standard P300 matrix.  
+The experiment was performed by Riccio et al., 2013\cite{riccio2013}, where a group of eight individuals with confirmed ALS disease were tasked to spell $7$ 5-letter words ($35$ total letters) with a with a standard P300 matrix.  
 
-Each time a letter is attempted to be spelled is called a letter trial attempt. Each trial contains 10 flashes in each of the 6 rows, and 10 flashes in each of the 6 columns. Each flash lasts for a total of 0.125 seconds each, following by an inter-flashing pause of the same duration. After each 120 flashes, an inter-trial pause is performed before moving to the next letter.
+Each time a letter is attempted to be spelled is called a letter spell attempt~\cite{Antonietti.etal2021}. Each letter spell attempt is composed of 10 flashes of the 6 rows, and 10 flashes of the 6 columns of the P300 matrix. Each flash lasts for a total of 0.125 seconds each, following by an inter-flashing pause of the same duration. After each 120 flashes, an inter-trial pause is performed before moving to the next letter.
 
-The original experiment was performed with an 8 channel EEG \textbf{DEVICE}, with electrodes placed at the Fz, Cz, Pz, Oz, P3, P4, PO7, and PO8 channels according to the 10/20 international system. The software used for the implementing the speller and the processing was the BCI2000 (open source)~\cite{schalk2004}. The eight subjects were instructed to perform a copy-spelling task, which means that they had to spell a predetermined set of words that was instructed beforehand.  In the original experiment, and the approach used in this work, is to use the first three words for calibration/training, while the remaining four are used for testing with visual feedback.
+The original experiment was performed with an 8 channel EEG (g.Mobilab, g.Tec, Austria), with a sampling frequency of $256$ Hz with electrodes placed at the Fz, Cz, Pz, Oz, P3, P4, PO7, and PO8 channels according to the 10/20 international system. The software used for  implementing the speller and the processing was the BCI2000~\cite{schalk2004}. The eight subjects were instructed to perform a copy-spelling task, which means that they had to spell a predetermined set of words that was instructed beforehand.  In the original experiment, and the approach used in this work, is to use the first three words for calibration/training, while the remaining four are used for testing with visual feedback.
 
 
 \begin{figure}[htbp]
@@ -140,6 +147,12 @@ The original experiment was performed with an 8 channel EEG \textbf{DEVICE}, wit
 
 As there are 10 repetitions per letter, 6 rows and 6 columns, this generates 120 flashes per single letter.  Summing up on all the $8$ channels, this results in a total of 960 segments, which are separated into 160 hits, and 800 nohits.  The experiment was performed using $7$ 5-letter words, resulting in $35$ letters, and a total of $33600$ segments. Out of these, $15$ letters were used for the training of the networks, and the remaining $20$ were used to test the accuracy in the BCI simulation.
 
+
+\subsection{BCI Simulation}
+
+The task of decoding information from brain signals inherits practices from Machine Learning (ML). Cross-validation is used in ML to reduce overfitting bias and to increase the independence on the dataset that is used as calibration. However, the brain data used in BCI is extracted from a person who is performing a task and whose signals are changing while trying to adapt to this operation. Hence, mixing the dataset, shuffling the sessions and trials is at least a challenging assumption. BCI Simulation, on the other hand, is not very well defined in BCI research, but their practice, without naming it, has been the regular approach for BCI Competitions. It consists in reproducing the operational sequence that was utilized to generate the dataset. Hence, the experiment is replicated offline using the training information to train or calibrate a classifier, and to classify the testing signals as if they were generated at that same moment~\cite{ramele.2018}. The training was performed only once, instead of multiple runs doing cross validation or calculating mean and standard deviation in the accuracies. This is because we want to simulate a real use case of a patient actually using our interface.
+
+\subsection{Signal Preprocessing and Plot Generation}
 
 \subsection{Neural Network Architectures}
 
@@ -170,8 +183,6 @@ After training with the first 15 letters, the network was used to predict the re
 
 These predictions were done by training each of the EEG channels separately, and then finding the channel that best perform. As mentioned early, another prediction was used by making a non-weighted voting system by each of the channels, and selecting the row and column with the most votes.
 
-The task of decoding information from brain signals inherits practices from Machine Learning (ML). Cross-validation is used in ML to reduce overfitting bias and to increase the independence on the dataset that is used as calibration. However, the brain data used in BCI is extracted from a person who is performing a task and whose signals are changing while trying to adapt to this operation. Hence, mixing the dataset, shuffling the sessions and trials is at least a challenging assumption. BCI Simulation, on the other hand, is not very well defined in BCI research, but their practice, without naming it, has been the regular approach for BCI Competitions. It consists in reproducing the operational sequence that was utilized to generate the dataset. Hence, the experiment is replicated offline using the training information to train or calibrate a classifier, and to classify the testing signals as if they were generated at that same moment~\cite{ramele.2018}. The training was performed only once, instead of multiple runs doing cross validation or calculating mean and standard deviation in the accuracies. This is because we want to simulate a real use case of a patient actually using our interface.
-
 The advantage of the VGG16 approach, is that it reduces the amount of hyperparameters that must be tinkered with, as all the filters and strides are kept constant. 
 
 \subsubsection{Small VGG16}
@@ -182,7 +193,7 @@ The advantage of the VGG16 approach, is that it reduces the amount of hyperparam
 \label{fig:nnv2}
 \end{figure*}
 
-The second approach was the Small VGG16  (SV16). The first change was to reduce the network size, so 2 convolutional layers and 2 fully connected layers were removed. Leaving the convolutional layers depth at 1, 32, 64 and 128, with spatial sides of 150, 75, 38, and 19. The flatten and dropout layers are left untouched, and then finally 3 fully connected layers of sizes 46208, 512 and 256. The overall philosophy of the architecture was left untouched, i.e. the padding, filter size and stride.
+The second approach was the Small VGG16  (SV16). The first change was to reduce the network size, so $2$ convolutional layers and $2$ fully connected layers were removed. Leaving the convolutional layers depth at 1, 32, 64 and 128, with spatial sides of 150, 75, 38, and 19. The flatten and dropout layers are left untouched, and then finally $3$ fully connected layers of sizes 46208, 512 and 256. The overall philosophy of the architecture was left untouched, i.e. the padding, filter size and stride.
 
 Another addition in this version was early stopping at 7 epochs to help decrease overfitting. 
 
@@ -194,9 +205,15 @@ Another addition in this version was early stopping at 7 epochs to help decrease
 \label{fig:nnv3}
 \end{figure*}
 
-With this multichannel network, instead of training all of the EEG channels separately, they were merged into a single 8-channel image on the preprocessing stage. And the network was trained with this image as input. This modified the input layer to have a depth of 8, but the subsequent layers were left intact. The best improvement was that it allowed for the combination of all the different EEG channels to work together, achieving a higher performance than each channel separately.
+With this multichannel network, instead of training all of the EEG channels separately, they were merged into a single 8-channel image on the preprocessing stage. And the network was trained with this multispectral image as input. This modified the input layer to have a depth of 8, but the subsequent layers were left intact. The best improvement was that it allowed for the combination of all the different EEG channels to work together, achieving a higher performance than each channel separately.
 
 To make this change work however, extra changes had to be made to the network parameters. The batch size was reduced to 6, as having a greater batch size generated memory issues. The last change was reducing the learning rate to the recommended value of $3\cdot10^-3$.
+
+\subsection{Software and Hardware}
+The code for all the experiments runs on a HP Pavillion laptop with a Intel I7 @2.8GHz processor. The available RAM is 16Gb, and the entire stack runs on CPU.
+
+The software for the signal segmentation, processing, and the procedure to create the pseudoreal dataset is written in python, using a modified version of the repository EEGWave which is publicly availalble in the CodeOcean platform \cite{Ramele2018EEGWA}. It uses the MNE library~\cite{Gramfort.etal2014} for segmenting the data and some operations with numpy~\cite{Harris.etal2020} for signal processing procedures.
+On the other hand, the generation of the plot of the signals is written in C++ using OpenCV, and all the neural networks architectures  are run using Tensorflow's API for C++, based on Benny Friedman's article~\cite{BennyCNN}. The full code is public and can be found at https://github.com/shipupi/BciSift/.  For the sake of replicability~\cite{Pavlov.etal2021}, all the software and data for this experiment is fully online available.
 
 \section{Results}
 \label{sec:results}
@@ -205,25 +222,26 @@ To make this change work however, extra changes had to be made to the network pa
 \subsection{Validation on the Pseudoreal dataset}
 
 
-\begin{table}[h]
+\begin{table*}[h]
 \centering
-\begin{tabular}{ |p{1cm}||p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}| }
+\begin{tabular}{ |p{1cm}||p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm} |}
  \hline
- Subject & VGG16(\%) & SV16 (\%)  & MSV16(\%) & HIST(\%)\\
+ Subject & Original & HIST & xDAWN & VMD & EEGNET & VGG16(\%) & SV16 (\%)  & MSV16(\%) \\
  \hline
- 1 & 15 & 10 & 0 & 35\\
- 2 & 70 & 50 & 75 & 85\\
- 3 & 30 & 30 & 40 & 25\\
- 4 & 30 & 40 & 30 & 55\\
- 5 & 35 & 50 & 50 & 40\\
- 6 & 45 & 40 & 50 & 60\\
- 7 & 70 & 65 & 80 & 80\\
- 8 & 90 & 95 & 100 & 95\\
+ 1 & 98 & 35 & 99 & 99 & 99 & 15 & 10 & 0 \\
+ 2 & 98 & 85 & 99 & 99 & 99 & 70 & 50 & 75 \\
+ 3 & 98 & 25 & 99 & 99 & 99 & 30 & 30 & 40 \\
+ 4 & 98 & 55 & 99 & 99 & 99 & 30 & 40 & 30 \\
+ 5 & 98 & 40 & 99 & 99 & 99 & 35 & 50 & 50 \\
+ 6 & 98 & 60 & 99 & 99 & 99 & 45 & 40 & 50 \\
+ 7 & 98 & 80 & 99 & 99 & 99 & 70 & 65 & 80 \\
+ 8 & 98 & 95 & 99 & 99 & 99 & 90 & 95 & 100 \\
  \hline
 \end{tabular}
-\caption[MSV16 accuracy comparison]{Character recognition rates for VGG16, SV16, MSV16 and HIST}
+\caption[MSV16 accuracy comparison]{Character recognition rates for the original, VGG16, SV16, MSV16 and HIST}
 \label{tab:resultsv1v2v3}
-\end{table}
+\end{table*}
+
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{images/v3intensification.eps}

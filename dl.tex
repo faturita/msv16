@@ -83,7 +83,7 @@ In terms of potential medical applications, patients with severe cases of Amyotr
 
 The P300 is a positive deflection that appears on EEG signals around 300 ms after the onset of an unexpected stimulus that provides relevant information. It can be cleverly used to implement a speller device that exploits the appearance of this waveform indicating which particularly event a person is paying attention to.  BCI systems based on P300 need to identify this voltage variation out of the natural noise of the EEG signal, and by doing that they can decode the message a person is trying to convey~\cite{Antonietti.etal2021,Orhanbulucu.etal2022}.
 
-CHEKCK The aim of this work is to analyze P300 signals emphasizing interpretability, by detecting automatically this component from the signal plot which is something that a clinician or physician can easily corroborate.  To do so, this work proposes to use Deep Learning (DL) techniques, particularly Convolutional Neural Networks (CNN) which have been proved very efficient to extract information from images, in this case images of signal plots.  At the same time, this proposal tackles one of the most important issues of applying DL techniques to health information, which is the the black box nature of neural network architectures. This work empahsizes the usage of this form of Feature engineering in terms of Actionable Analytics~\cite{Ganapathy.etal2018}, insight data that can be extracted from the problem, and that has a certain meaning in the knowledge base and dictionary used for the community that is currently dealing with the problem and at the same time using DL in a way which emphasize its real utility in this particular problem where data is scarce and DL is still not very usable in this situation~\cite{Sterniuk.etal2021}.
+CHEKCK The aim of this work is to analyze P300 signals emphasizing interpretability, by detecting automatically this component from the signal plot which is something that a clinician or physician can easily corroborate~\cite{Papastylianou.etal2016}.  To do so, this work proposes to use Deep Learning (DL) techniques, particularly Convolutional Neural Networks (CNN) which have been proved very efficient to extract information from images, in this case images of signal plots.  At the same time, this proposal tackles one of the most important issues of applying DL techniques to health information, which is the the black box nature of neural network architectures. This work empahsizes the usage of this form of Feature engineering in terms of Actionable Analytics~\cite{Ganapathy.etal2018}, insight data that can be extracted from the problem, and that has a certain meaning in the knowledge base and dictionary used for the community that is currently dealing with the problem and at the same time using DL in a way which emphasize its real utility in this particular problem where data is scarce and DL is still not very usable in this situation~\cite{Sterniuk.etal2021}.
 
 This work proceeds as follows.  Section \ref{background} introduces several approaches to decode EEG signals in this rich field.  Then we will discuss about our proposal for classification, which involves plotting the signals, and training a Convolutional Neural Network to identify the images.  The Materials and Methods explains the control procedure implemented to verify the theoretical validaty of the proposed algorithm. Finally, the Results section compare these results to other studies performed using a public and reliable dataset of EEG signals from ALS patients. 
 
@@ -100,7 +100,7 @@ BCINet a convolutional neural network to predict population features from EEG si
 
 CNN to identify Motor Imagery patterns which are also used in BCI applications.\cite{Tabar.2016}, or Sleep Stage identification\cite{Cai.etal2021}.
 
-EEGNet \cite{Lawhern.2018}.
+EEGNet~\cite{Lawhern.2018} is a convolutional neural network which consists of 3 convolutional layers and 1 fully-connected layer, designed to process EEG data, using the convolution as a way to implement multiscle filter-banks~\cite{Zhu.etal2022}.
 
 xDAWN
 Variational Mode Decomposition VMD
@@ -226,7 +226,7 @@ On the other hand, the generation of the plot of the signals is written in C++ u
 \centering
 \begin{tabular}{ |p{1cm}||p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm} |}
  \hline
- Subject & Original & HIST & xDAWN & VMD & EEGNET & VGG16(\%) & SV16 (\%)  & MSV16(\%) \\
+ Subject & Original & HIST & xDAWN & VMD & EEGNET & VGG16 & SV16 & MSV16 \\
  \hline
  1 & 98 & 35 & 99 & 99 & 99 & 15 & 10 & 0 \\
  2 & 98 & 85 & 99 & 99 & 99 & 70 & 50 & 75 \\
